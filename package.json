@@ -1,0 +1,23 @@
+{
+	"name": "prismcraft-artworks",
+	"version": "1.0.0",
+	"description": "eCommerce application built with the MERN stack",
+	"type": "module",
+	"main": "server.js",
+	"scripts": {
+		"start": "node backend/server.js",
+		"server": "nodemon backend/server.js",
+		"client": "npm start --prefix frontend",
+		"dev": "concurrently \"npm run server\" \"npm run client\""
+	},
+	"author": "Elijah W. Cravens",
+	"license": "MIT",
+	"dependencies": {
+		"express": "^4.19.2"
+	},
+	"devDependencies": {
+		"concurrently": "^8.2.2",
+		"dotenv": "^16.4.5",
+		"nodemon": "^3.1.0"
+	}
+}
