@@ -6,7 +6,7 @@ const products = [
 		description:
 			"Enjoy a unique interpretation of Van Gogh's Starry Night, where the swirling sky and luminescent stars are brought to life with glittering diamonds. The piece is framed beautifully, blending classical art with modern craftsmanship.",
 		price: 95.0,
-		countInStock: 5,
+		countInStock: 0,
 		rating: 4.5,
 		numReviews: 12,
 	},
