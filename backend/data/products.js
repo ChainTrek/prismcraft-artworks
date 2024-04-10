@@ -1,6 +1,5 @@
 const products = [
 	{
-		_id: '1',
 		name: 'Starry Night Reimagined in Diamonds',
 		imagePath: '/images/starry-night.png',
 		description:
@@ -11,7 +10,6 @@ const products = [
 		numReviews: 12,
 	},
 	{
-		_id: '2',
 		name: 'Sunflower Fields Sparkle',
 		imagePath: '/images/sunflower-fields.png',
 		description:
@@ -22,7 +20,6 @@ const products = [
 		numReviews: 8,
 	},
 	{
-		_id: '3',
 		name: 'Autumn Forest Majesty',
 		imagePath: '/images/autumn-forest.png',
 		description:
@@ -33,7 +30,6 @@ const products = [
 		numReviews: 10,
 	},
 	{
-		_id: '4',
 		name: 'Tranquil Ocean View',
 		imagePath: '/images/ocean-view.png',
 		description:
@@ -44,7 +40,6 @@ const products = [
 		numReviews: 15,
 	},
 	{
-		_id: '5',
 		name: 'Majestic Mountain Ranges',
 		imagePath: '/images/majestic-mountains.png',
 		description:
@@ -55,7 +50,6 @@ const products = [
 		numReviews: 5,
 	},
 	{
-		_id: '6',
 		name: 'Lavender Fields Forever',
 		imagePath: '/images/lavender-field.png',
 		description:
