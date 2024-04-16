@@ -43,7 +43,7 @@ const Header = () => {
 							<LinkContainer to='/cart'>
 								<Nav.Link>
 									<FaShoppingCart /> Cart
-									{cartItems.length > 0 && (
+									{userInfo && cartItems.length > 0 && (
 										<Badge pill bg='success' style={{ marginLeft: '5px' }}>
 											{cartItems.reduce((a, c) => a + c.qty, 0)}
 										</Badge>
