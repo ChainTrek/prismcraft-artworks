@@ -1,14 +1,48 @@
 import React from 'react'
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Row, Col, ListGroup, Image, Form, Card, Button } from 'react-bootstrap'
+import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { useGetOrderDetailsQuery } from '../slices/ordersApiSlice'
+import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery } from '../slices/ordersApiSlice'
 
 const OrderScreen = () => {
 	const { id: orderId } = useParams()
 
 	const { data: order, refetch, error, isLoading } = useGetOrderDetailsQuery(orderId)
+
+	const [payOrder, { isLoading: isPaying }] = usePayOrderMutation()
+
+	const [{ isPending }, paypalDispatch] = usePayPalScriptReducer()
+
+	const { data: paypal, isLoading: loadingPayPal, error: paypalError } = useGetPayPalClientIdQuery()
+
+	const { userInfo } = useSelector(state => state.auth)
+
+	useEffect(() => {
+		if (!paypalError && !loadingPayPal && paypal.clientId) {
+			const loadPayPalScript = async () => {
+				paypalDispatch({
+					type: 'resetOptions',
+					value: { 'client-id': paypal.clientId },
+					currency: 'USD',
+				 })
+				 paypalDispatch({
+					type: 'setLoadingStatus',
+					value: 'pending',
+				 })
+			}
+
+			if (order && !order.isPaid) {
+				if (!window.paypal) {
+					loadPayPalScript()
+				}
+			}
+		}
+	}, [order, paypal, paypalError, loadingPayPal, paypalDispatch])
 
 	return isLoading ? (
 		<Loader />
@@ -66,60 +100,70 @@ const OrderScreen = () => {
 							)}
 						</ListGroup.Item>
 
-            <ListGroup.Item>
-              <h2>Order Items</h2>
-              {order.orderItems.length === 0 ? <Message>Your order is empty</Message> : (
-                <ListGroup variant='flush'>
-                  {order.orderItems.map((item, index) => (
-                    <ListGroup.Item key={index}>
-                      <Row>
-                        <Col md={2}>
-                          <Image src={item.imagePath} alt={item.name} fluid rounded />
-                        </Col>
-                        <Col>
-                          <Link to={`/product/${item.product}`}>{item.name}</Link>
-                        </Col>
-                        <Col md={4}>
-                          {item.qty} x ${item.price} = ${(item.qty * item.price).toFixed(2)}
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              )}
-            </ListGroup.Item>
+						<ListGroup.Item>
+							<h2>Order Items</h2>
+							{order.orderItems.length === 0 ? (
+								<Message>Your order is empty</Message>
+							) : (
+								<ListGroup variant='flush'>
+									{order.orderItems.map((item, index) => (
+										<ListGroup.Item key={index}>
+											<Row>
+												<Col md={2}>
+													<Image
+														src={item.imagePath}
+														alt={item.name}
+														fluid
+														rounded
+													/>
+												</Col>
+												<Col>
+													<Link to={`/product/${item.product}`}>
+														{item.name}
+													</Link>
+												</Col>
+												<Col md={4}>
+													{item.qty} x ${item.price} = $
+													{(item.qty * item.price).toFixed(2)}
+												</Col>
+											</Row>
+										</ListGroup.Item>
+									))}
+								</ListGroup>
+							)}
+						</ListGroup.Item>
 					</ListGroup>
 				</Col>
 				<Col md={4}>
-          <Card>
-            <ListGroup variant='flush'>
-              <ListGroup.Item>
-                <h2>Order Summary</h2>
-              </ListGroup.Item>
+					<Card>
+						<ListGroup variant='flush'>
+							<ListGroup.Item>
+								<h2>Order Summary</h2>
+							</ListGroup.Item>
 
-              <ListGroup.Item>
-                <Row>
-                  <Col>Items</Col>
-                  <Col>${order.itemsPrice.toFixed(2)}</Col>
-                </Row>
-                <Row>
-                  <Col>Shipping</Col>
-                  <Col>${order.shippingPrice.toFixed(2)}</Col>
-                </Row>
-                <Row>
-                  <Col>Tax</Col>
-                  <Col>${order.taxPrice.toFixed(2)}</Col>
-                </Row>
-                <Row>
-                  <Col>Total</Col>
-                  <Col>${order.totalPrice.toFixed(2)}</Col>
-                </Row>
-              </ListGroup.Item>
-              {/* PAY ORDER PLACEHOLDER */}
-              {/* MARK AS DELIVERED PLACEHOLDER */}
-            </ListGroup>
-          </Card>
-        </Col>
+							<ListGroup.Item>
+								<Row>
+									<Col>Items</Col>
+									<Col>${order.itemsPrice.toFixed(2)}</Col>
+								</Row>
+								<Row>
+									<Col>Shipping</Col>
+									<Col>${order.shippingPrice.toFixed(2)}</Col>
+								</Row>
+								<Row>
+									<Col>Tax</Col>
+									<Col>${order.taxPrice.toFixed(2)}</Col>
+								</Row>
+								<Row>
+									<Col>Total</Col>
+									<Col>${order.totalPrice.toFixed(2)}</Col>
+								</Row>
+							</ListGroup.Item>
+							{/* PAY ORDER PLACEHOLDER */}
+							{/* MARK AS DELIVERED PLACEHOLDER */}
+						</ListGroup>
+					</Card>
+				</Col>
 			</Row>
 		</>
 	)
